@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+    table {
+        border: 1px black solid;
+    }
+
+    td {
+        width: 40px;
+    }
+
+    button {
+        height: 25px;
+        width: 40px;
+    }
+
+    #screen {
+        width: 260px;
+        height: 30px;
+        font-size: 18px;
+    }
+
+</style>
+<body>
+    <input type="text" id='screen' readonly/>
+    <br> <br>
+    <table>
+        <tr>
+            <td> <button id="clear" onClick="clearScreen()"> AC </button> </td>
+        </tr>
+        <td> <br> </td>
+        <tr>
+            <td> <button id="7" onClick="addToScreen(7)"> 7 </button> </td>
+            <td> <button id="8" onClick="addToScreen(8)"> 8 </button> </td>
+            <td> <button id="9" onClick="addToScreen(9)"> 9 </button> </td>
+            <td> <button id="x" onClick="operation('/')"> ÷ </button> </td>
+            <td> </td>
+            <td> <button id="6" onClick="flipSign()"> +/- </button> </td>
+        </tr>
+        <tr>
+            <td> <button id="4" onClick="addToScreen(4)"> 4 </button> </td>
+            <td> <button id="5" onClick="addToScreen(5)"> 5 </button> </td>
+            <td> <button id="6" onClick="addToScreen(6)"> 6 </button> </td>
+            <td> <button id="-" onClick="operation('x')"> x </button> </td>
+            <td> </td>
+            <td> <button id="6" onClick="backSpace()"> ← </button> </td>
+        </tr>
+        <tr>
+            <td> <button id="1" onClick="addToScreen(1)"> 1 </button> </td>
+            <td> <button id="2" onClick="addToScreen(2)"> 2 </button> </td>
+            <td> <button id="3" onClick="addToScreen(3)"> 3 </button> </td>            
+            <td> <button id="+" onClick="operation('-')"> - </button> </td>
+            <td> </td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td> <button id="0" onClick="addToScreen(0)"> 0 </button> </td>
+            <td> <button id="00" onClick="addToScreen('00')"> 00 </button> </td>
+            <td> <button id="." onClick="addToScreen('.')"> . </button> </td>
+            <td> <button id="+" onClick="operation('+')"> + </button> </td>
+            <td> </td>
+            <td> <button id="=" onClick="calculate()"> = </button> </td>
+        </tr>
+    </table>
+    
+</body>
+<script>
+    let string = "";
+    let number1 = 0;
+    let number2 = 0;
+    let initialised = false;
+    let screen = document.getElementById("screen");
+    let func = "";
+
+    // Types number onto screen after checking first number isnt 0
+    const addToScreen = (x) => {
+        if (string == "" && x == 0) 
+        {
+            return false;
+        } else 
+        {
+            string = string + x;
+            screen.value = string;
+        }
+    }
+
+    // Removes last digit on screen and stores it in number1
+    const backSpace = () => {
+        string = string.slice(0,-1);
+        screen.value = screen.value.slice(0,-1);
+        number1 = parseFloat(parseFloat(screen.value).toFixed(2));
+    }
+
+    // Clears the screen and memory
+    const clearScreen = () => {
+        string="";
+        screen.value = string;
+        initialised = false;
+    }
+
+    // Function for "=" sign, calculates if a operation has been selected
+    const calculate = () => {
+        if (func!= "")
+        {
+            operation(func);
+            func="";
+        }
+    }
+
+    // Function for all operations
+    const operation = (op) => {
+        // Checks if this is the first number being entered into calculator
+        if (!initialised) {
+            number1 = parseFloat(parseFloat(screen.value).toFixed(2));
+            func = op;
+            clearScreen();
+            initialised = true;
+        }
+        // Checks if something has been typed into screen incase user decides to switch between operations
+        else if (initialised && string == "")
+        {
+            func = op;
+        }
+        // All 4 cases of operations
+        else if (initialised && string != "") 
+        {
+            number2 = parseFloat(parseFloat(screen.value).toFixed(2));
+            if (func == "+" && string != "") {
+                number1 = parseFloat(parseFloat(number1 + number2).toFixed(2));
+                midCalc(op);
+            }
+            else if (func == "x" && string != "") {
+                number1 = parseFloat(parseFloat(number1 * number2).toFixed(2));
+                midCalc(op);
+            }
+            else if (func == "-" && string != "") {
+                number1 = parseFloat(parseFloat(number1 - number2).toFixed(2));
+                midCalc(op);
+            }
+           else  if (func == "/" && string != "") {
+                number1 = parseFloat(parseFloat(number1 / number2).toFixed(2));
+                midCalc(op);
+            }
+        }     
+    }
+
+     // Displays answer on screen, resets second number to 0 and stores the function
+    const midCalc = (op) => {
+        screen.value = number1;
+        number2 = 0;
+        func = op;
+        string="";
+    }
+
+    // Flips the sign of value on the screen
+
+    const flipSign = () => {
+        screen.value = screen.value * -1;
+    }
+</script>
+</html>
